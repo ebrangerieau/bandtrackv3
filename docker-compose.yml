@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DB_PATH: /data/bandtrack.db
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      CORS_ORIGINS: http://localhost,http://frontend
+    volumes:
+      - bandtrack-data:/data
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  bandtrack-data:
