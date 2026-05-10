@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BandTrack — Stage Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;600&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #0e0e16; height: 100%; }
+    body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+    #root { height: 100vh; }
+
+    /* ── BandTrack motion library ────────────────────────────────── */
+    @keyframes bt-glow-pulse {
+      0%, 100% { filter: brightness(1); }
+      50%      { filter: brightness(1.18); }
+    }
+    @keyframes bt-dot-pulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%      { transform: scale(1.3); opacity: .55; }
+    }
+    @keyframes bt-shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes bt-fadeup {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bt-slidein {
+      from { opacity: 0; transform: translateX(14px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes bt-bar-grow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    @keyframes bt-eq {
+      0%, 100% { transform: scaleY(.35); }
+      50%      { transform: scaleY(1); }
+    }
+    @keyframes bt-orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%      { transform: translate(-12px, 8px) scale(1.08); }
+      66%      { transform: translate(10px, -6px) scale(.95); }
+    }
+    @keyframes bt-marquee {
+      0%   { transform: translateX(-3px); }
+      50%  { transform: translateX(3px); }
+      100% { transform: translateX(-3px); }
+    }
+    @keyframes bt-thumb-halo {
+      0%, 100% { box-shadow:
+                   0 0 0 4px rgba(255,255,255,.18),
+                   0 0 18px rgba(255,255,255,.4),
+                   0 2px 6px rgba(0,0,0,.5); }
+      50%      { box-shadow:
+                   0 0 0 6px rgba(255,255,255,.10),
+                   0 0 26px rgba(255,255,255,.55),
+                   0 2px 6px rgba(0,0,0,.5); }
+    }
+
+    .bt-orb            { animation: bt-orb 9s ease-in-out infinite; }
+    .bt-glow-pulse     { animation: bt-glow-pulse 3.4s ease-in-out infinite; }
+    .bt-dot-pulse      { animation: bt-dot-pulse 1.6s ease-in-out infinite; }
+    .bt-thumb-halo     { animation: bt-thumb-halo 2.4s ease-in-out infinite; }
+    .bt-fadeup         { animation: bt-fadeup .55s cubic-bezier(.2,.7,.3,1) both; }
+    .bt-slidein        { animation: bt-slidein .5s cubic-bezier(.2,.7,.3,1) both; }
+    .bt-bar-grow       { animation: bt-bar-grow .9s cubic-bezier(.2,.7,.3,1) both;
+                         transform-origin: left center; }
+    .bt-marquee        { animation: bt-marquee 5s ease-in-out infinite; }
+
+    .bt-shimmer-text {
+      background: linear-gradient(90deg,
+        currentColor 0%, currentColor 40%,
+        rgba(255,255,255,.95) 50%,
+        currentColor 60%, currentColor 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      animation: bt-shimmer 3.6s linear infinite;
+    }
+
+    .bt-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+    .bt-eq i { display: block; width: 2.5px; height: 100%; border-radius: 2px;
+               background: currentColor; transform-origin: bottom;
+               animation: bt-eq 1s ease-in-out infinite; }
+    .bt-eq i:nth-child(1) { animation-delay: -.2s; }
+    .bt-eq i:nth-child(2) { animation-delay: -.5s; }
+    .bt-eq i:nth-child(3) { animation-delay: -.8s; }
+    .bt-eq i:nth-child(4) { animation-delay: -.1s; }
+
+    /* Stagger helper — apply to a list parent */
+    .bt-stagger > * { animation: bt-fadeup .55s cubic-bezier(.2,.7,.3,1) both; }
+    .bt-stagger > *:nth-child(1) { animation-delay: .03s; }
+    .bt-stagger > *:nth-child(2) { animation-delay: .09s; }
+    .bt-stagger > *:nth-child(3) { animation-delay: .15s; }
+    .bt-stagger > *:nth-child(4) { animation-delay: .21s; }
+    .bt-stagger > *:nth-child(5) { animation-delay: .27s; }
+    .bt-stagger > *:nth-child(6) { animation-delay: .33s; }
+    .bt-stagger > *:nth-child(7) { animation-delay: .39s; }
+    .bt-stagger > *:nth-child(8) { animation-delay: .45s; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="theme.jsx"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="ui.jsx"></script>
+  <script type="text/babel" src="screens/dashboard.jsx"></script>
+  <script type="text/babel" src="screens/repertoire.jsx"></script>
+  <script type="text/babel" src="screens/morceau.jsx"></script>
+  <script type="text/babel" src="screens/prestations.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
