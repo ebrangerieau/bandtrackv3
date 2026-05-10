@@ -23,17 +23,33 @@ The database is seeded with 18 songs, 5 gigs, and 5 activity items on first run.
 
 ---
 
-## Production (Docker)
+## Production — VPS + Traefik
+
+Prérequis : Traefik déjà en place avec un réseau Docker `web` externe et un certresolver `letsencrypt`.
 
 ```bash
-# Optional: set a strong secret key
-export SECRET_KEY=your-secret-here
+# Sur le VPS, cloner le repo
+git clone https://github.com/ebrangerieau/bandtrackv3.git bandtrack
+cd bandtrack
 
+# Définir une clé secrète forte
+export SECRET_KEY=$(openssl rand -hex 32)
+
+# Lancer
 docker compose up --build -d
-# App available at http://localhost
 ```
 
-Data persists in the `bandtrack-data` Docker volume.
+L'app sera disponible sur **https://bandtrack.fr** et **https://www.bandtrack.fr**  
+(TLS automatique via Let's Encrypt, certificat géré par Traefik).
+
+Les données persistent dans le volume Docker `bandtrack-data`.
+
+### Mise à jour
+
+```bash
+git pull
+docker compose up --build -d
+```
 
 ---
 

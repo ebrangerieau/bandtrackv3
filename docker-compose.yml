@@ -1,23 +1,36 @@
 services:
   backend:
     build: ./backend
+    container_name: bandtrack-backend
+    restart: unless-stopped
     environment:
       DB_PATH: /data/bandtrack.db
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
-      CORS_ORIGINS: http://localhost,http://frontend
+      CORS_ORIGINS: https://bandtrack.fr,https://www.bandtrack.fr
     volumes:
       - bandtrack-data:/data
-    ports:
-      - "5000:5000"
-    restart: unless-stopped
+    networks:
+      - web
 
   frontend:
     build: ./frontend
-    ports:
-      - "80:80"
+    container_name: bandtrack-frontend
+    restart: unless-stopped
     depends_on:
       - backend
-    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.bandtrack.rule=Host(`bandtrack.fr`) || Host(`www.bandtrack.fr`)"
+      - "traefik.http.routers.bandtrack.entrypoints=websecure"
+      - "traefik.http.routers.bandtrack.tls.certresolver=letsencrypt"
+      - "traefik.http.services.bandtrack.loadbalancer.server.port=80"
 
 volumes:
   bandtrack-data:
+
+networks:
+  web:
+    external: true
